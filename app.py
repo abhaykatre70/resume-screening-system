@@ -16,6 +16,15 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
 
+# Generative AI & Environment
+from groq import Groq
+from dotenv import load_dotenv
+
+load_dotenv()
+AI_API_KEY = os.getenv("AI_API_KEY")
+if AI_API_KEY:
+    ai_client = Groq(api_key=AI_API_KEY)
+
 # ── App Setup ────────────────────────────────────────────────────────────────
 app = Flask(__name__)
 CORS(app)
@@ -136,6 +145,42 @@ def compute_overall_score(skill_score: float, tfidf_score: float) -> float:
     return round(0.60 * skill_score + 0.40 * tfidf_score, 2)
 
 
+def get_ai_feedback(resume_skills: list, jd_skills: list, missing_skills: list, score: float) -> str:
+    """Gets feedback from Generative AI if available, otherwise returns mock feedback."""
+    if not AI_API_KEY:
+        return (
+            "**API Key Not Configured.**\n"
+            "To use live Generative AI insights, create a `.env` file and set `AI_API_KEY=your_key`.\n\n"
+            "*Standard Analysis:*\n"
+            f"- The candidate shares a **{score}%** match with the required skill set.\n"
+            f"- They are missing exactly **{len(missing_skills)}** targeted skills.\n"
+            "- Focus your interview on the missing gaps like: " + ", ".join(missing_skills[:3]) + "."
+        )
+    
+    try:
+        prompt = (
+            f"You are an expert HR Talent Acquisition Specialist. Generate a 3-4 sentence evaluation "
+            f"for a candidate whose resume scored {score}% on our matching algorithm. "
+            f"They have these skills: {', '.join(resume_skills[:15])}. "
+            f"However, they are missing these required skills: {', '.join(missing_skills)}. "
+            "Write a brief, professional summary of their fit and what interview questions we should ask them."
+        )
+        
+        completion = ai_client.chat.completions.create(
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            model="llama-3.1-8b-instant",
+            temperature=0.6,
+        )
+        
+        return completion.choices[0].message.content
+    except Exception as e:
+        return f"**AI Service Error:** Could not generate feedback at this time. ({str(e)})"
+
 def analyse_resume(resume_text: str, jd_text: str) -> dict:
     """Full analysis pipeline."""
     clean_resume = preprocess(resume_text)
@@ -154,6 +199,8 @@ def analyse_resume(resume_text: str, jd_text: str) -> dict:
         label: list({ent.text for ent in doc.ents if ent.label_ == label})
         for label in ('PERSON', 'ORG', 'GPE', 'DATE')
     }
+    
+    ai_feedback = get_ai_feedback(resume_skills, jd_skills, skill_result['missing'], overall)
 
     return {
         "overall_score":      overall,
@@ -164,6 +211,7 @@ def analyse_resume(resume_text: str, jd_text: str) -> dict:
         "resume_skills":      resume_skills,
         "jd_skills":          jd_skills,
         "entities":           entities,
+        "ai_feedback":        ai_feedback
     }
 
 # ── Routes ────────────────────────────────────────────────────────────────────

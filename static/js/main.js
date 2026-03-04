@@ -1,15 +1,25 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- Theme Toggle ---
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    let isDarkMode = true;
+
+    themeToggle.addEventListener('click', () => {
+        isDarkMode = !isDarkMode;
+        document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+        themeIcon.textContent = isDarkMode ? '☀️' : '🌙';
+        themeToggle.innerHTML = `<span id="themeIcon">${isDarkMode ? '☀️' : '🌙'}</span> ${isDarkMode ? 'Light Mode' : 'Dark Mode'}`;
+    });
+
     // --- Element References ---
     const form = document.getElementById('screenForm');
     const dropZone = document.getElementById('dropZone');
     const fileInput = document.getElementById('resumeFile');
-    const browseBtn = document.getElementById('browseBtn');
     const filePreview = document.getElementById('filePreview');
     const fileNameDisplay = document.getElementById('fileName');
     const removeBtn = document.getElementById('removeFile');
     const jobDesc = document.getElementById('jobDesc');
-    const charCount = document.getElementById('charCount');
     const submitBtn = document.getElementById('submitBtn');
     const templateChips = document.querySelectorAll('.chip');
 
@@ -30,13 +40,16 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     // Score Elements
-    const ringFill = document.getElementById('ringFill');
     const scoreValue = document.getElementById('scoreValue');
     const skillBar = document.getElementById('skillBar');
     const skillVal = document.getElementById('skillVal');
     const tfidfBar = document.getElementById('tfidfBar');
     const tfidfVal = document.getElementById('tfidfVal');
     const verdictBadge = document.getElementById('verdictBadge');
+
+    // Generative AI
+    const aiSuggestionBox = document.getElementById('aiSuggestionBox');
+    const aiContent = document.getElementById('aiContent');
 
     // Tabs & Lists
     const tabs = document.querySelectorAll('.stab');
@@ -52,28 +65,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const entityContent = document.getElementById('entityContent');
     const entitySection = document.getElementById('entitySection');
 
-    // Data Store for Export
-    let currentResult = null;
-
     // --- Templates ---
     const tpls = {
         ml: "We are seeking a Machine Learning Engineer to join our team. Experience with Python, Scikit-Learn, TensorFlow, and PyTorch is required. Strong understanding of deep learning, NLP, and feature engineering. SQL and Git are nice to have.",
         web: "Looking for a Frontend Web Developer with expertise in HTML, CSS, JavaScript, and React. Experience with Node, Express, and REST APIs is a plus. Needs to be comfortable with Git and Bootstrap. Strong communication and problem solving skills.",
         ds: "Data Scientist wanted. You will analyse complex datasets using Python, Pandas, Numpy, and SQL. Experience with Tableau or Power BI is required. Machine learning knowledge (regression, classification) is highly valued.",
-        devops: "DevOps Engineer role. Looking for experience with AWS or GCP. Strong skills in Docker, Kubernetes, and CI/CD pipelines (Jenkins). Familiarity with Linux, Bash scripting, and Terraform is preferred."
     };
 
     templateChips.forEach(chip => {
         chip.addEventListener('click', () => {
             const key = chip.getAttribute('data-tpl');
             jobDesc.value = tpls[key];
-            updateCharCount();
         });
     });
 
     // --- File Handling ---
-    browseBtn.addEventListener('click', (e) => {
-        e.preventDefault();
+    dropZone.addEventListener('click', (e) => {
+        if (e.target === removeBtn) return;
         fileInput.click();
     });
 
@@ -116,17 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Job Description ---
-    function updateCharCount() {
-        charCount.textContent = `${jobDesc.value.length} characters`;
-    }
-    jobDesc.addEventListener('input', updateCharCount);
-
     // --- Form Submit ---
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!fileInput.files.length) return alert('Please upload a resume first.');
-        if (!jobDesc.value.trim()) return alert('Please enter a job description.');
+        if (!jobDesc.value.trim()) return alert('Please enter a target job description.');
 
         startLoading();
 
@@ -143,7 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await res.json();
             if (!res.ok) throw new Error(data.error || 'Failed to screen resume.');
 
-            currentResult = data;
             showResults(data);
         } catch (err) {
             showError(err.message);
@@ -163,13 +164,13 @@ document.addEventListener('DOMContentLoaded', () => {
         lsteps.forEach(s => { s.classList.remove('active', 'done'); });
         lsteps[0].classList.add('active');
 
-        setTimeout(() => setStep(1), 400);
-        setTimeout(() => setStep(2), 900);
-        setTimeout(() => setStep(3), 1300);
+        setTimeout(() => setStep(1), 600);
+        setTimeout(() => setStep(2), 1200);
+        setTimeout(() => setStep(3), 1800);
     }
 
     function setStep(idx) {
-        if (!rLoading.style.display === 'block') return; // Cancel if done
+        if (rLoading.style.display !== 'flex') return; // Cancel if done
         if (idx > 0) {
             lsteps[idx - 1].classList.remove('active');
             lsteps[idx - 1].classList.add('done');
@@ -202,21 +203,9 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.disabled = false;
         showPanel('content');
 
-        // 1. Overall Score Animation
+        // 1. Overall Score
         const score = Math.round(data.overall_score);
-        animateValue(scoreValue, 0, score, 1500);
-
-        // SVG Ring Dashoffset
-        // Full ring = 314
-        const offset = 314 - (score / 100) * 314;
-        setTimeout(() => {
-            ringFill.style.strokeDashoffset = offset;
-
-            // Color ring based on score
-            if (score >= 80) ringFill.style.stroke = 'var(--success)';
-            else if (score >= 50) ringFill.style.stroke = '#facc15';
-            else ringFill.style.stroke = 'var(--danger)';
-        }, 100);
+        animateValue(scoreValue, 0, score, 1000);
 
         // 2. Bars
         skillBar.style.width = '0%';
@@ -228,24 +217,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
             tfidfBar.style.width = `${data.tfidf_score}%`;
             tfidfVal.textContent = `${data.tfidf_score}%`;
-        }, 500);
+        }, 200);
 
         // 3. Verdict Badge
         if (score >= 80) {
             verdictBadge.textContent = '🌟 Excellent Match';
             verdictBadge.style.background = 'rgba(16, 185, 129, 0.1)';
-            verdictBadge.style.color = '#34d399';
+            verdictBadge.style.color = 'var(--success)';
             verdictBadge.style.borderColor = 'rgba(16, 185, 129, 0.3)';
         } else if (score >= 50) {
             verdictBadge.textContent = '⚠️ Partial Match';
             verdictBadge.style.background = 'rgba(250, 204, 21, 0.1)';
-            verdictBadge.style.color = '#fde047';
+            verdictBadge.style.color = '#eab308';
             verdictBadge.style.borderColor = 'rgba(250, 204, 21, 0.3)';
         } else {
             verdictBadge.textContent = '❌ Poor Match';
             verdictBadge.style.background = 'rgba(239, 68, 68, 0.1)';
-            verdictBadge.style.color = '#fca5a5';
+            verdictBadge.style.color = 'var(--danger)';
             verdictBadge.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+        }
+
+        // AI Feedback Text
+        if (data.ai_feedback) {
+            aiContent.innerHTML = formatAIText(data.ai_feedback);
+            aiSuggestionBox.style.display = 'block';
+        } else {
+            aiSuggestionBox.style.display = 'none';
         }
 
         // 4. Skills Tabs
@@ -257,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         msCount.textContent = data.missing_skills.length;
         rCount.textContent = data.resume_skills.length;
 
-        // Reset tabs to Matched
+        // Reset tabs
         tabs.forEach(t => t.classList.remove('active'));
         panels.forEach(p => p.classList.remove('active'));
         tabs[0].classList.add('active');
@@ -270,7 +267,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'PERSON': 'People / Names',
             'ORG': 'Organisations',
             'GPE': 'Locations',
-            'DATE': 'Dates / Durations'
+            'DATE': 'Dates'
         };
 
         for (const [key, label] of Object.entries(entMap)) {
@@ -293,6 +290,24 @@ document.addEventListener('DOMContentLoaded', () => {
         entitySection.style.display = hasEntities ? 'block' : 'none';
     }
 
+    function formatAIText(text) {
+        const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        const lines = formatted.split('\n');
+        let html = '';
+        let inList = false;
+        for (let line of lines) {
+            if (line.trim().startsWith('- ') || line.trim().startsWith('* ')) {
+                if (!inList) { html += '<ul>'; inList = true; }
+                html += `<li>${line.substring(2)}</li>`;
+            } else {
+                if (inList) { html += '</ul>'; inList = false; }
+                if (line.trim()) html += `<p>${line}</p>`;
+            }
+        }
+        if (inList) html += '</ul>';
+        return html;
+    }
+
     function renderSkills(container, items, cssClass) {
         if (!items || items.length === 0) {
             container.innerHTML = `<span class="no-skills">No skills found</span>`;
@@ -306,9 +321,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const step = (timestamp) => {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-            // easeOutQuart
             const easeProgress = 1 - Math.pow(1 - progress, 4);
-            obj.innerHTML = Math.floor(easeProgress * (end - start) + start);
+            obj.innerHTML = Math.floor(easeProgress * (end - start) + start) + '%';
             if (progress < 1) {
                 window.requestAnimationFrame(step);
             }
@@ -329,27 +343,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // --- Exports ---
-    document.getElementById('exportJSON').addEventListener('click', () => {
-        if (!currentResult) return;
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentResult, null, 2));
-        const a = document.createElement('a');
-        a.href = dataStr;
-        a.download = `resume_analysis_${currentResult.filename}.json`;
-        a.click();
-    });
-
     document.getElementById('exportReport').addEventListener('click', () => {
         window.print();
     });
 
     document.getElementById('newScreen').addEventListener('click', () => {
-        form.reset();
         fileInput.value = '';
         handleFile();
-        charCount.textContent = '0 characters';
-        ringFill.style.strokeDashoffset = 314;
-        ringFill.style.stroke = 'var(--accent-1)';
         showPanel('placeholder');
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });

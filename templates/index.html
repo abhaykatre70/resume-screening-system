@@ -4,119 +4,62 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ResumeIQ — AI-Powered Resume Screening System</title>
-  <meta name="description"
-    content="Screen resumes against job descriptions using NLP and AI. Get instant skill match scores, gap analysis and entity insights." />
+  <title>ResumeIQ | NLP & AI Screener</title>
+  <meta name="description" content="Screen resumes with AI and NLP." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap"
     rel="stylesheet" />
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
   <link rel="stylesheet" href="/static/css/style.css" />
 </head>
 
-<body>
-
-  <!-- ── BACKGROUND BLOBS ── -->
-  <div class="bg-blob blob-1"></div>
-  <div class="bg-blob blob-2"></div>
-  <div class="bg-blob blob-3"></div>
+<body data-theme="dark">
 
   <!-- ── NAVBAR ── -->
   <nav class="navbar" id="navbar">
     <div class="nav-inner">
-      <a class="nav-brand" href="#">
-        <span class="brand-icon">⚡</span>
+      <a class="nav-brand" href="/">
+        <img class="brand-icon" src="/static/favicon.svg" alt="ResumeIQ Logo" />
         <span>ResumeIQ</span>
       </a>
-      <div class="nav-links">
-        <a href="#how-it-works">How it works</a>
-        <a href="#screen-section" class="btn-nav">Try it now →</a>
+      <div style="display: flex; align-items: center; gap: 2rem;">
+        <div class="nav-links">
+          <a href="/" class="active">Home</a>
+          <a href="#about-contact">About</a>
+          <a href="#about-contact">Contact</a>
+        </div>
+        <div class="nav-actions">
+          <button class="theme-toggle" id="themeToggle">
+            <span id="themeIcon">☀️</span> Light Mode
+          </button>
+        </div>
       </div>
     </div>
   </nav>
 
-  <!-- ── HERO ── -->
-  <section class="hero">
-    <div class="hero-inner">
-      <div class="badge-pill">🤖 NLP · TF-IDF · Skill Classification</div>
-      <h1 class="hero-title">
-        AI-Powered<br /><span class="gradient-text">Resume Screening</span>
-      </h1>
-      <p class="hero-sub">
-        Upload a resume, paste a job description and get an instant<br />
-        <strong>Skill Match Score</strong>, gap analysis &amp; entity insights — powered by Python NLP.
-      </p>
-      <div class="hero-cta">
-        <a href="#screen-section" class="btn-primary">Start Screening</a>
-        <a href="#how-it-works" class="btn-ghost">See how it works ↓</a>
-      </div>
-      <div class="hero-stats">
-        <div class="stat"><span class="stat-num">95%</span><span class="stat-label">Accuracy</span></div>
-        <div class="stat-divider"></div>
-        <div class="stat"><span class="stat-num">100+</span><span class="stat-label">Skills detected</span></div>
-        <div class="stat-divider"></div>
-        <div class="stat"><span class="stat-num">&lt;2s</span><span class="stat-label">Analysis time</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── HOW IT WORKS ── -->
-  <section class="how-section" id="how-it-works">
+  <!-- ── MAIN UPLOAD SECTION ── -->
+  <section class="main-section">
     <div class="container">
       <div class="section-header">
-        <h2>How it <span class="gradient-text">works</span></h2>
-        <p>Three-step NLP pipeline built entirely in Python</p>
-      </div>
-      <div class="steps-grid">
-        <div class="step-card">
-          <div class="step-num">01</div>
-          <div class="step-icon">📄</div>
-          <h3>Upload Resume</h3>
-          <p>PDF, DOCX, or TXT — our parser extracts raw text and applies spaCy NER to identify people, organisations
-            and dates.</p>
-        </div>
-        <div class="step-card">
-          <div class="step-num">02</div>
-          <div class="step-icon">🧠</div>
-          <h3>NLP Processing</h3>
-          <p>Text is lemmatised, stop-words removed. 100+ skill keywords are pattern-matched. TF-IDF feature vectors are
-            built for both documents.</p>
-        </div>
-        <div class="step-card">
-          <div class="step-num">03</div>
-          <div class="step-icon">📊</div>
-          <h3>Score &amp; Report</h3>
-          <p>Cosine similarity (40%) + skill match ratio (60%) produce an overall score with matched/missing skill
-            breakdown.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── SCREENING FORM ── -->
-  <section class="screen-section" id="screen-section">
-    <div class="container">
-      <div class="section-header">
-        <h2>Screen a <span class="gradient-text">Resume</span></h2>
-        <p>Upload a resume and paste a job description to get your score</p>
+        <h1>AI-Powered <span class="gradient-text">Resume Screening</span></h1>
+        <p>Upload a resume and paste a job description. We'll extract skills, calculate match scores, and provide AI
+          feedback instantly.</p>
       </div>
 
       <div class="screen-grid">
         <!-- LEFT — FORM -->
         <div class="form-panel glass-card">
           <form id="screenForm" enctype="multipart/form-data">
-
             <!-- Drop Zone -->
             <div class="form-group">
-              <label class="form-label">Resume File <span class="required">*</span></label>
+              <label class="form-label">Upload Candidate Resume (PDF, DOCX, TXT) <span class="required">*</span></label>
               <div class="drop-zone" id="dropZone">
                 <input type="file" id="resumeFile" name="resume" accept=".pdf,.docx,.txt" hidden />
-                <div class="drop-icon">📎</div>
-                <p class="drop-text">Drag &amp; drop or <button type="button" class="drop-browse"
-                    id="browseBtn">browse</button></p>
-                <p class="drop-hint">PDF, DOCX, TXT up to 10 MB</p>
+                <div class="drop-icon">�</div>
+                <p class="drop-text">Click to browse or drag and drop</p>
+                <p class="drop-hint">Max file size: 10 MB</p>
                 <div class="file-preview" id="filePreview" style="display:none">
-                  <span class="file-icon">📄</span>
                   <span class="file-name" id="fileName"></span>
                   <button type="button" class="file-remove" id="removeFile">✕</button>
                 </div>
@@ -125,136 +68,117 @@
 
             <!-- Job Description -->
             <div class="form-group">
-              <label class="form-label" for="jobDesc">Job Description <span class="required">*</span></label>
-              <textarea id="jobDesc" name="job_description" class="form-textarea" rows="10"
-                placeholder="Paste the full job description here…
-e.g. 'We are looking for a Python developer with 2+ years of experience in Flask, REST APIs, PostgreSQL and Docker. Familiarity with machine learning (scikit-learn, pandas) is a plus…'"></textarea>
-              <div class="char-count" id="charCount">0 characters</div>
-            </div>
-
-            <!-- Quick JD Templates -->
-            <div class="form-group">
-              <label class="form-label">Quick Templates</label>
-              <div class="template-chips" id="templateChips">
+              <label class="form-label" for="jobDesc">Target Job Description <span class="required">*</span></label>
+              <div class="template-chips" id="templateChips" style="margin-bottom: 0.75rem;">
                 <button type="button" class="chip" data-tpl="ml">ML Engineer</button>
                 <button type="button" class="chip" data-tpl="web">Web Developer</button>
                 <button type="button" class="chip" data-tpl="ds">Data Scientist</button>
-                <button type="button" class="chip" data-tpl="devops">DevOps Engineer</button>
               </div>
+              <textarea id="jobDesc" name="job_description" class="form-textarea" rows="8"
+                placeholder="Paste the job description here..."></textarea>
+            </div>
+
+            <!-- Free AI Integration Note -->
+            <div
+              style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span>💡</span> Powered by Scikit-Learn NLP + Generative AI Profile Feedback
             </div>
 
             <button type="submit" class="btn-submit" id="submitBtn">
-              <span class="btn-text">Analyse Resume</span>
-              <span class="btn-icon">🔍</span>
+              Get Score & Feedback
             </button>
           </form>
         </div>
 
         <!-- RIGHT — RESULTS -->
-        <div class="results-panel" id="resultsPanel">
+        <div class="results-panel glass-card" id="resultsPanel"
+          style="padding: 0; box-shadow: none; border: none; background: transparent; backdrop-filter: none;">
 
           <!-- Placeholder -->
           <div class="results-placeholder" id="resultsPlaceholder">
-            <div class="placeholder-anim">
-              <div class="orbit-ring">
-                <div class="orbit-dot"></div>
-              </div>
-              <div class="placeholder-icon">🎯</div>
-            </div>
-            <h3>Results will appear here</h3>
-            <p>Upload a resume and fill in the job description, then click <strong>Analyse Resume</strong>.</p>
+            <div class="placeholder-icon" style="font-size: 3rem; margin-bottom: 1rem; opacity: 1;">🎯</div>
+            <h3 style="color: var(--text-main); margin-bottom: 0.5rem;">Awaiting Input</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">Drop a resume and hit run.</p>
           </div>
 
-          <!-- Loading Spinner -->
+          <!-- Loading -->
           <div class="results-loading" id="resultsLoading" style="display:none">
             <div class="spinner"></div>
-            <p>Analysing resume…</p>
             <div class="loading-steps" id="loadingSteps">
-              <div class="lstep active" id="ls1">📄 Extracting text</div>
-              <div class="lstep" id="ls2">🧹 Preprocessing</div>
-              <div class="lstep" id="ls3">🔍 Matching skills</div>
-              <div class="lstep" id="ls4">📊 Computing score</div>
+              <div class="lstep active" id="ls1">📄 Extracting document text...</div>
+              <div class="lstep" id="ls2">� NLP Feature Extraction...</div>
+              <div class="lstep" id="ls3">🔍 Cosine Similarity check...</div>
+              <div class="lstep" id="ls4">🤖 Querying Generative AI...</div>
             </div>
           </div>
 
-          <!-- Actual Results -->
-          <div class="results-content" id="resultsContent" style="display:none">
+          <!-- Actual Results (Hidden by Default) -->
+          <div class="results-content glass-card" id="resultsContent"
+            style="display:none; padding: 2.5rem; height: 100%;">
 
-            <!-- Score Ring -->
-            <div class="score-ring-wrap glass-card">
-              <div class="score-ring-inner">
-                <svg class="score-ring" viewBox="0 0 120 120">
-                  <circle class="ring-bg" cx="60" cy="60" r="50" />
-                  <circle class="ring-fill" id="ringFill" cx="60" cy="60" r="50" stroke-dasharray="314"
-                    stroke-dashoffset="314" />
-                </svg>
-                <div class="score-center">
-                  <span class="score-value" id="scoreValue">0</span>
-                  <span class="score-pct">%</span>
-                  <span class="score-label">Overall Score</span>
+            <div class="score-card">
+              <div class="score-label">Match Score</div>
+              <div class="score-value-large gradient-text" id="scoreValue">0%</div>
+              <div class="verdict-badge" id="verdictBadge"></div>
+            </div>
+
+            <div class="score-breakdown">
+              <div class="breakdown-item">
+                <span class="bi-label">Hard Skill Match</span>
+                <div class="bi-bar-wrap">
+                  <div class="bi-bar skill-bar" id="skillBar"></div>
                 </div>
+                <span class="bi-val" id="skillVal">0%</span>
               </div>
-              <div class="score-breakdown">
-                <div class="breakdown-item">
-                  <span class="bi-label">Skill Match</span>
-                  <div class="bi-bar-wrap">
-                    <div class="bi-bar skill-bar" id="skillBar"></div>
-                  </div>
-                  <span class="bi-val" id="skillVal">–</span>
+              <div class="breakdown-item">
+                <span class="bi-label">Context Similarity</span>
+                <div class="bi-bar-wrap">
+                  <div class="bi-bar tfidf-bar" id="tfidfBar"></div>
                 </div>
-                <div class="breakdown-item">
-                  <span class="bi-label">Content Similarity</span>
-                  <div class="bi-bar-wrap">
-                    <div class="bi-bar tfidf-bar" id="tfidfBar"></div>
-                  </div>
-                  <span class="bi-val" id="tfidfVal">–</span>
-                </div>
+                <span class="bi-val" id="tfidfVal">0%</span>
               </div>
             </div>
 
-            <!-- Badge -->
-            <div class="verdict-badge" id="verdictBadge"></div>
-
-            <!-- Skill Tabs -->
-            <div class="glass-card skill-section">
-              <div class="skill-tabs">
-                <button class="stab active" data-tab="matched" id="tabMatched">
-                  ✅ Matched Skills <span class="stab-count" id="matchedCount">0</span>
-                </button>
-                <button class="stab" data-tab="missing" id="tabMissing">
-                  ❌ Missing Skills <span class="stab-count" id="missingCount">0</span>
-                </button>
-                <button class="stab" data-tab="resume" id="tabResume">
-                  📋 Resume Skills <span class="stab-count" id="resumeCount">0</span>
-                </button>
-              </div>
-
-              <div class="skill-content" id="skillContent">
-                <div class="stab-panel active" id="panelMatched"></div>
-                <div class="stab-panel" id="panelMissing"></div>
-                <div class="stab-panel" id="panelResume"></div>
+            <!-- Generative AI Feedback -->
+            <div class="ai-suggestion" id="aiSuggestionBox">
+              <div class="ai-header">🤖 AI Candidate Overview</div>
+              <div class="ai-content" id="aiContent">
+                <!-- Gemini Result Injected Here -->
               </div>
             </div>
 
-            <!-- Entities -->
-            <div class="glass-card entity-section" id="entitySection">
-              <h4 class="section-mini-title">🔎 Detected Entities</h4>
+            <!-- Tabs -->
+            <div class="skill-tabs" style="margin-top: 2rem;">
+              <button class="stab active" data-tab="matched">✅ Found <span class="stab-count"
+                  id="matchedCount">0</span></button>
+              <button class="stab" data-tab="missing">❌ Missing <span class="stab-count"
+                  id="missingCount">0</span></button>
+              <button class="stab" data-tab="resume">📋 Extra <span class="stab-count"
+                  id="resumeCount">0</span></button>
+            </div>
+            <div class="skill-content" id="skillContent">
+              <div class="stab-panel active" id="panelMatched"></div>
+              <div class="stab-panel" id="panelMissing"></div>
+              <div class="stab-panel" id="panelResume"></div>
+            </div>
+
+            <!-- Extracted Info -->
+            <div class="entity-section" id="entitySection" style="margin-top: 2rem; display: none;">
+              <h4 class="section-mini-title">🔎 Extracted Background</h4>
               <div id="entityContent" class="entity-grid"></div>
             </div>
 
-            <!-- Export -->
             <div class="export-row">
-              <button class="btn-export" id="exportJSON">Export JSON</button>
+              <button class="btn-export" id="newScreen">Start Over</button>
               <button class="btn-export" id="exportReport">Print Report</button>
-              <button class="btn-export" id="newScreen">New Screening</button>
             </div>
           </div>
 
           <!-- Error -->
           <div class="results-error" id="resultsError" style="display:none">
             <div class="error-icon">⚠️</div>
-            <p id="errorMsg">Something went wrong.</p>
-            <button class="btn-ghost" id="retryBtn">Try again</button>
+            <p id="errorMsg">Error</p>
+            <button class="btn-export" id="retryBtn">Dismiss</button>
           </div>
 
         </div>
@@ -263,18 +187,43 @@ e.g. 'We are looking for a Python developer with 2+ years of experience in Flask
   </section>
 
   <!-- ── FOOTER ── -->
-  <footer class="footer">
-    <div class="container">
-      <p>Built with ❤️ using <strong>Python · Flask · spaCy · scikit-learn</strong></p>
-      <p class="footer-sub">NLP-based Resume Screening System — College Project 2026</p>
-      <div class="footer-links"
-        style="margin-top: 1rem; display: flex; gap: 1rem; justify-content: center; font-size: 0.9rem;">
-        <a href="https://abhaykatre.me/" target="_blank"
-          style="color: var(--accent-1); text-decoration: none;">Portfolio</a>
-        <a href="https://www.linkedin.com/in/katreabhay/" target="_blank"
-          style="color: var(--accent-1); text-decoration: none;">LinkedIn</a>
-        <a href="https://github.com/abhaykatre70" target="_blank"
-          style="color: var(--accent-1); text-decoration: none;">GitHub</a>
+  <footer class="footer" id="about-contact"
+    style="padding: 1.5rem 0; border-top: 1px solid var(--border); background: var(--bg-secondary);">
+    <div class="container"
+      style="display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;">
+
+      <p style="font-size: 0.85rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 1rem;">
+        <strong>About:</strong> An intelligent Resume Screening tool built to streamline HR hiring using NLP and
+        Generative AI. Designed and Developed by <strong style="color: var(--text-main);">Abhay Katre</strong>.
+      </p>
+
+      <div class="footer-socials" style="gap: 1.5rem; justify-content: center;">
+        <a href="https://abhaykatre.me/" target="_blank" class="social-link" title="Portfolio">
+          <svg class="social-icon" viewBox="0 0 100 100">
+            <rect width="100" height="100" rx="20" fill="#0a1835" />
+            <path
+              d="M 28 32 H 41 Q 50 32 50 42 Q 50 51 41 51 H 36 V 65 H 28 Z M 36 38 V 45 H 41 Q 43 45 43 42 Q 43 38 41 38 Z"
+              fill="#58a1fa" />
+            <path d="M 55 35 V 40 H 60 V 45 H 55 V 65 H 48 V 45 H 44 V 40 H 48 V 35 Q 48 29 55 29 H 60 V 35 Z"
+              fill="#58a1fa" />
+          </svg>
+          Portfolio
+        </a>
+        <a href="https://www.linkedin.com/in/katreabhay/" target="_blank" class="social-link" title="LinkedIn">
+          <svg class="social-icon" viewBox="0 0 448 512">
+            <path
+              d="M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z" />
+          </svg>
+          LinkedIn
+        </a>
+        <a href="https://github.com/abhaykatre70" target="_blank" class="social-link" title="GitHub">
+          <svg class="social-icon" viewBox="0 0 24 24">
+            <path
+              d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12">
+            </path>
+          </svg>
+          GitHub
+        </a>
       </div>
     </div>
   </footer>
