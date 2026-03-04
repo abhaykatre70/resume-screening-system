@@ -29,7 +29,9 @@ if AI_API_KEY:
 app = Flask(__name__)
 CORS(app)
 
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
+import tempfile
+
+UPLOAD_FOLDER = os.path.join(tempfile.gettempdir(), 'resume_uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10 MB
@@ -38,11 +40,15 @@ ALLOWED_EXT = {'pdf', 'docx', 'txt'}
 
 # ── Load spaCy model (en_core_web_sm) ────────────────────────────────────────
 try:
-    nlp = spacy.load('en_core_web_sm')
-except OSError:
-    from spacy.cli import download as spacy_download
-    spacy_download('en_core_web_sm')
-    nlp = spacy.load('en_core_web_sm')
+    import en_core_web_sm
+    nlp = en_core_web_sm.load()
+except ImportError:
+    try:
+        nlp = spacy.load('en_core_web_sm')
+    except OSError:
+        from spacy.cli import download as spacy_download
+        spacy_download('en_core_web_sm')
+        nlp = spacy.load('en_core_web_sm')
 
 # ── Skill Taxonomy ────────────────────────────────────────────────────────────
 SKILL_TAXONOMY = [
