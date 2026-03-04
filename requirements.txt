@@ -1,0 +1,12 @@
+flask
+flask-cors
+python-docx
+PyPDF2
+scikit-learn
+spacy==3.7.4
+numpy
+Werkzeug
+gunicorn
+groq
+python-dotenv
+en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.7.1/en_core_web_sm-3.7.1.tar.gz

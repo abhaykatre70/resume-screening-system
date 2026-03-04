@@ -17,6 +17,7 @@ uploads/
 *.pdf
 *.docx
 *.txt
+!requirements.txt
 
 # Flask
 instance/
