@@ -4,7 +4,7 @@ python-docx
 PyPDF2
 scikit-learn
 spacy==3.7.4
-numpy
+numpy<2.0.0
 Werkzeug
 gunicorn
 groq
