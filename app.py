@@ -76,6 +76,81 @@ SKILL_TAXONOMY = [
     "junit","pytest","postman",
 ]
 
+# ── Job Title → Skill Mapping (for short/simple JD auto-expansion) ───────────
+JOB_TITLE_SKILLS_MAP = [
+    # Each entry: (list of trigger keywords, expanded JD text with taxonomy skills)
+    (
+        ["software developer", "software engineer", "swe", "full stack", "fullstack", "backend developer", "backend engineer"],
+        "We are looking for a Software Developer. Required skills: python, javascript, sql, flask, django, react, node, "
+        "rest, api, git, github, mysql, postgresql, mongodb, linux, docker, agile, scrum, problem solving, teamwork, communication."
+    ),
+    (
+        ["machine learning", "ml engineer", "ml developer", "ai engineer", "artificial intelligence", "deep learning"],
+        "We are looking for a Machine Learning Engineer. Required skills: python, machine learning, deep learning, nlp, "
+        "scikit-learn, tensorflow, pytorch, keras, numpy, pandas, feature engineering, regression, classification, "
+        "clustering, sql, git, github, docker, aws, communication, problem solving."
+    ),
+    (
+        ["data scientist", "data science", "data analyst", "analytics"],
+        "We are looking for a Data Scientist. Required skills: python, pandas, numpy, sql, machine learning, "
+        "regression, classification, clustering, scikit-learn, matplotlib, seaborn, tableau, power bi, "
+        "excel, data analysis, git, communication, leadership."
+    ),
+    (
+        ["web developer", "frontend developer", "front end", "frontend engineer", "ui developer"],
+        "We are looking for a Web Developer. Required skills: html, css, javascript, react, angular, vue, "
+        "node, express, rest, api, git, github, bootstrap, tailwind, graphql, mongodb, problem solving, communication."
+    ),
+    (
+        ["devops", "cloud engineer", "site reliability", "sre", "infrastructure engineer"],
+        "We are looking for a DevOps Engineer. Required skills: docker, kubernetes, aws, azure, gcp, google cloud, "
+        "linux, git, github, jenkins, ci/cd, terraform, ansible, python, bash, shell, monitoring, teamwork, communication."
+    ),
+    (
+        ["android developer", "ios developer", "mobile developer", "app developer", "flutter developer"],
+        "We are looking for a Mobile App Developer. Required skills: java, kotlin, swift, python, flutter, react, "
+        "git, github, rest, api, firebase, sqlite, agile, scrum, problem solving, teamwork, communication."
+    ),
+    (
+        ["data engineer", "etl", "big data", "database engineer"],
+        "We are looking for a Data Engineer. Required skills: python, sql, postgresql, mysql, mongodb, "
+        "redis, elasticsearch, aws, azure, docker, spark, git, github, linux, pandas, numpy, communication, teamwork."
+    ),
+    (
+        ["nlp engineer", "nlp developer", "natural language", "text mining", "language model"],
+        "We are looking for an NLP Engineer. Required skills: python, nlp, natural language processing, "
+        "transformers, bert, gpt, pytorch, tensorflow, scikit-learn, numpy, pandas, machine learning, "
+        "deep learning, sql, git, github, communication, problem solving."
+    ),
+    (
+        ["cybersecurity", "security engineer", "penetration", "ethical hacker", "information security"],
+        "We are looking for a Cybersecurity Engineer. Required skills: python, bash, shell, linux, git, "
+        "networking, testing, sql, aws, docker, communication, problem solving, critical thinking, leadership."
+    ),
+    (
+        ["java developer", "java engineer", "spring developer", "spring boot"],
+        "We are looking for a Java Developer. Required skills: java, spring, sql, mysql, postgresql, "
+        "rest, api, git, github, docker, junit, testing, agile, scrum, problem solving, teamwork, communication."
+    ),
+]
+
+
+def expand_jd(jd_text: str) -> str:
+    """If the JD is very short (a job title / a few words), auto-expand it to a
+    skill-rich description so the taxonomy matcher can work properly."""
+    if len(jd_text.strip()) > 150:
+        return jd_text  # Already detailed — use as-is
+
+    jd_lower = jd_text.strip().lower()
+    for triggers, expanded in JOB_TITLE_SKILLS_MAP:
+        for trigger in triggers:
+            if trigger in jd_lower:
+                return expanded
+
+    # Fallback: if nothing matched, return original (will still do TF-IDF)
+    return jd_text
+
+
 # ── Utilities ─────────────────────────────────────────────────────────────────
 def allowed_file(filename: str) -> bool:
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXT
@@ -189,6 +264,9 @@ def get_ai_feedback(resume_skills: list, jd_skills: list, missing_skills: list, 
 
 def analyse_resume(resume_text: str, jd_text: str) -> dict:
     """Full analysis pipeline."""
+    # Auto-expand short/title-only JD into a full skill-rich description
+    jd_text = expand_jd(jd_text)
+
     clean_resume = preprocess(resume_text)
     clean_jd    = preprocess(jd_text)
 

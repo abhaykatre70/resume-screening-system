@@ -67,9 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Templates ---
     const tpls = {
-        ml: "We are seeking a Machine Learning Engineer to join our team. Experience with Python, Scikit-Learn, TensorFlow, and PyTorch is required. Strong understanding of deep learning, NLP, and feature engineering. SQL and Git are nice to have.",
-        web: "Looking for a Frontend Web Developer with expertise in HTML, CSS, JavaScript, and React. Experience with Node, Express, and REST APIs is a plus. Needs to be comfortable with Git and Bootstrap. Strong communication and problem solving skills.",
-        ds: "Data Scientist wanted. You will analyse complex datasets using Python, Pandas, Numpy, and SQL. Experience with Tableau or Power BI is required. Machine learning knowledge (regression, classification) is highly valued.",
+        ml: "We are seeking a Machine Learning Engineer. Requirements: Python, scikit-learn, TensorFlow, PyTorch, deep learning, NLP, natural language processing, feature engineering, numpy, pandas, SQL, Git, GitHub, Docker, AWS. Experience with regression, classification, and clustering algorithms. Strong communication and problem solving skills required.",
+        web: "Looking for a Full Stack Web Developer with expertise in HTML, CSS, JavaScript, React, Node, Express, and REST API development. Experience with Git, GitHub, Bootstrap, and MongoDB is required. Strong communication, teamwork, and problem solving skills needed.",
+        ds: "Data Scientist wanted. Requirements: Python, pandas, numpy, SQL, Machine Learning, regression, classification, clustering, matplotlib, seaborn, Power BI, Tableau, data analysis, scikit-learn. Strong communication and leadership skills.",
+        dev: "We are hiring a Python Full Stack Developer. Required skills: Python, Flask, JavaScript, React, Machine Learning, scikit-learn, REST API, Docker, AWS, Git, GitHub, MySQL, MongoDB, PostgreSQL, Linux, Agile, Scrum, problem solving, teamwork, communication.",
     };
 
     templateChips.forEach(chip => {
