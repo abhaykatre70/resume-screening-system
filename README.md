@@ -1,8 +1,9 @@
 # ⚡ ResumeIQ - AI-Powered Resume Screening System
 
 An intelligent, full-stack Resume Screening application designed to streamline HR hiring processes using NLP (Natural Language Processing) and Generative AI. 
-
 Upload a candidate's resume (PDF, DOCX, TXT) alongside a target job description, and the system will automatically extract skills, calculate an exact match score, and provide deeper insights via a configured AI.
+
+> 🚀 **Live Demo:** [resume-screening-system-gray.vercel.app](https://resume-screening-system-gray.vercel.app/)
 
 ---
 
@@ -41,7 +42,7 @@ Upload a candidate's resume (PDF, DOCX, TXT) alongside a target job description,
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/abhaykatre70/resume-screening-system.git
+git clone https://github.com/abhaykatre-dev/resume-screening-system.git
 cd resume-screening-system
 ```
 
@@ -58,6 +59,7 @@ python -m spacy download en_core_web_sm
 ```
 
 ### 3. Configure API Keys
+
 Create a `.env` file in the root directory and add your Groq API key to enable AI insights:
 ```env
 AI_API_KEY=your_groq_api_key_here
@@ -67,6 +69,7 @@ AI_API_KEY=your_groq_api_key_here
 ```bash
 python app.py
 ```
+
 Open your browser and navigate to `http://127.0.0.1:5000` to access ResumeIQ.
 
 ---
@@ -74,9 +77,10 @@ Open your browser and navigate to `http://127.0.0.1:5000` to access ResumeIQ.
 ## 👨‍💻 Developer & Portfolio
 
 Designed and Built by **Abhay Katre**  
-- **Portfolio:** [abhaykatre.me](https://abhaykatre.me/)
-- **LinkedIn:** [in/katreabhay](https://www.linkedin.com/in/katreabhay/)
-- **GitHub:** [abhaykatre70](https://github.com/abhaykatre70)
+- **🌐 Portfolio:** [abhaykatre.me](https://abhaykatre.me/)
+- **💼 LinkedIn:** [in/abhaykatre-dev](https://www.linkedin.com/in/abhaykatre-dev/)
+- **🐙 GitHub:** [abhaykatre-dev](https://github.com/abhaykatre-dev)
 
 ---
+
 *ResumeIQ leverages modern web tools and LLM integrations to make initial screening phases 10x faster and entirely unbiased.*
